@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projeto KDEVS | Desenvolvimento Web Avançado</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap');
+        
+        :root {
+            --primary: #00f0ff;
+            --secondary: #7928ca;
+            --dark: #0a0a0a;
+            --darker: #050505;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--darker);
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4, .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .gradient-border {
+            position: relative;
+        }
+        
+        .gradient-border::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: inherit;
+            padding: 2px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+        
+        .glow {
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.7);
+        }
+        
+        .tech-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .tech-icon:hover {
+            transform: translateY(-5px);
+            filter: drop-shadow(0 0 8px var(--primary));
+        }
+        
+        .service-card {
+            background: rgba(15, 15, 15, 0.7);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(0, 240, 255, 0.2);
+        }
+        
+        .hexagon {
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        }
+        
+        .floating {
+            animation: floating 6s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .nav-link {
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 0;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            box-shadow: 0 0 0 4px rgba(15, 15, 15, 0.9);
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: -23px;
+            top: 0;
+            height: 100%;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+        }
+
+        /* Grid Background */
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: 
+                linear-gradient(rgba(20, 20, 20, 0.2) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(20, 20, 20, 0.2) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* Terminal Styles */
+        .terminal {
+            background: rgba(10, 10, 10, 0.9);
+            border-radius: 8px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+        }
+
+        .terminal-header {
+            background: rgba(15, 15, 15, 0.8);
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+        }
+
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .terminal-dot.red {
+            background: #ff5f56;
+        }
+
+        .terminal-dot.yellow {
+            background: #ffbd2e;
+        }
+
+        .terminal-dot.green {
+            background: #27c93f;
+        }
+
+        .terminal-title {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 12px;
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .terminal-body {
+            padding: 16px;
+            height: 300px;
+            overflow-y: auto;
+        }
+
+        .terminal-line {
+            margin-bottom: 8px;
+            line-height: 1.5;
+            color: #00f0ff;
+            font-size: 14px;
+        }
+
+        .terminal-line.prompt:before {
+            content: "> ";
+            color: #7928ca;
+        }
+
+        .terminal-line.output {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .terminal-line.comment {
+            color: rgba(255, 255, 255, 0.4);
+            font-style: italic;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background: #00f0ff;
+            animation: blink 1s infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Chat Widget Styles */
+        .chat-widget {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 9999;
+        }
+
+        .chat-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(0, 240, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chat-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(0, 240, 255, 0.4);
+        }
+
+        .chat-button i {
+            color: white;
+            font-size: 24px;
+        }
+
+        .chat-container {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 350px;
+            max-height: 500px;
+            background: rgba(15, 15, 15, 0.95);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            transform: translateY(20px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .chat-container.open {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .chat-header {
+            padding: 15px;
+            background: rgba(25, 25, 25, 0.9);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-header h3 {
+            font-weight: 600;
+            font-size: 18px;
+            margin: 0;
+            color: white;
+        }
+
+        .chat-header .close-chat {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 20px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .chat-header .close-chat:hover {
+            color: var(--primary);
+        }
+
+        .chat-messages {
+            padding: 15px;
+            height: 300px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message.user {
+            align-items: flex-end;
+        }
+
+        .message.bot {
+            align-items: flex-start;
+        }
+
+        .message-content {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.bot .message-content {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 5px;
+        }
+
+        .chat-input {
+            padding: 15px;
+            background: rgba(25, 25, 25, 0.9);
+            border-top: 1px solid rgba(0, 240, 255, 0.1);
+            display: flex;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px 15px;
+            border-radius: 20px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            outline: none;
+        }
+
+        .chat-input input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .chat-input button {
+            margin-left: 10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .chat-input button:hover {
+            transform: scale(1.05);
+        }
+
+        .telegram-icon {
+            background: #0088cc;
+        }
+
+        .telegram-icon:hover {
+            background: #0077b5;
+        }
+
+        /* Animation for chat button */
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 240, 255, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 240, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 240, 255, 0); }
+        }
+
+        .chat-button.pulse {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div id="app">
+        <!-- Grid Background -->
+        <div class="grid-bg"></div>
+        
+        <!-- Navigation Component -->
+        <navigation></navigation>
+        
+        <!-- Hero Section Component -->
+        <hero-section></hero-section>
+        
+        <!-- Clients Section Component -->
+        <clients-section></clients-section>
+        
+        <!-- Services Section Component -->
+        <services-section></services-section>
+        
+        <!-- Technologies Section Component -->
+        <technologies-section></technologies-section>
+        
+        <!-- Process Section Component -->
+        <process-section></process-section>
+        
+        <!-- Contact Section Component -->
+        <contact-section></contact-section>
+        
+        <!-- Footer Component -->
+        <app-footer></app-footer>
+        
+        <!-- Chat Widget -->
+        <div class="chat-widget">
+            <div class="chat-container" :class="{ 'open': isChatOpen }">
+                <div class="chat-header">
+                    <h3>Chat com a KDEVS</h3>
+                    <button class="close-chat" @click="toggleChat">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="chat-messages" ref="chatMessages">
+                    <div class="message bot">
+                        <div class="message-content">
+                            Olá! 👋 Como posso te ajudar hoje?
+                        </div>
+                        <div class="message-time">Agora</div>
+                    </div>
+                    <div v-for="(message, index) in messages" :key="index" class="message" :class="message.sender">
+                        <div class="message-content">
+                            {{ message.text }}
+                        </div>
+                        <div class="message-time">{{ message.time }}</div>
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <input 
+                        type="text" 
+                        v-model="messageInput" 
+                        placeholder="Digite sua mensagem..." 
+                        @keyup.enter="sendMessage"
+                    >
+                    <button @click="sendMessage">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                    <a href="https://t.me/seu_usuario_telegram" target="_blank" class="telegram-icon" title="Conversar no Telegram">
+                        <i class="fab fa-telegram-plane"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="chat-button" :class="{ 'pulse': !isChatOpen }" @click="toggleChat">
+                <i class="fas fa-comment-dots"></i>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation Component
+        Vue.component('navigation', {
+            template: `
+                <nav class="fixed w-full z-50 bg-black bg-opacity-80 backdrop-filter backdrop-blur-lg border-b border-gray-800">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div class="flex items-center justify-between h-16">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <span class="text-2xl font-bold gradient-text font-orbitron">KDEVS</span>
+                                </div>
+                                <div class="hidden md:block">
+                                    <div class="ml-10 flex items-baseline space-x-4">
+                                        <a href="#home" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-white">Início</a>
+                                        <a href="#services" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-white">Serviços</a>
+                                        <a href="#technologies" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-white">Tecnologias</a>
+                                        <a href="#process" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-white">Processo</a>
+                                        <a href="#contact" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-white">Contato</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hidden md:block">
+                                <a href="#contact" class="ml-4 px-6 py-2 rounded-md text-sm font-medium font-orbitron bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-600 hover:to-blue-700 transition-all duration-300">
+                                    Fale Conosco
+                                </a>
+                            </div>
+                            <div class="-mr-2 flex md:hidden">
+                                <button @click="toggleMenu" type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none">
+                                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Mobile menu -->
+                    <div class="md:hidden" :class="{ 'hidden': !isMenuOpen }" id="mobile-menu">
+                        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-black bg-opacity-90">
+                            <a href="#home" class="block px-3 py-2 rounded-md text-base font-medium text-white">Início</a>
+                            <a href="#services" class="block px-3 py-2 rounded-md text-base font-medium text-white">Serviços</a>
+                            <a href="#technologies" class="block px-3 py-2 rounded-md text-base font-medium text-white">Tecnologias</a>
+                            <a href="#process" class="block px-3 py-2 rounded-md text-base font-medium text-white">Processo</a>
+                            <a href="#contact" class="block px-3 py-2 rounded-md text-base font-medium text-white">Contato</a>
+                            <a href="#contact" class="block px-3 py-2 rounded-md text-base font-medium text-center bg-gradient-to-r from-cyan-500 to-blue-600 text-white">Fale Conosco</a>
+                        </div>
+                    </div>
+                </nav>
+            `,
+            data() {
+                return {
+                    isMenuOpen: false
+                }
+            },
+            methods: {
+                toggleMenu() {
+                    this.isMenuOpen = !this.isMenuOpen;
+                }
+            }
+        });
+
+        // Hero Section Component
+        Vue.component('hero-section', {
+            template: `
+                <section id="home" class="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+                    <div class="grid grid-cols-2 md:grid-ccols-2 gap-12 items-center">
+                        <div class="space-y-8">
+                            <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold font-orbitron">
+                                <span class="gradient-text">Transformando</span> <br>
+                                <span class="text-white">ideias em</span> <br>
+                                <span class="gradient-text glow">realidade digital</span>
+                            </h1>
+                            <p class="text-lg text-gray-300 max-w-lg">
+                                Na KDEVS, combinamos tecnologia de ponta com design inovador para criar soluções web que impulsionam seu negócio para o futuro.
+                            </p>
+                            <div class="flex flex-wrap gap-4">
+                                <a href="#contact" class="px-8 py-3 rounded-md font-medium font-orbitron bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-600 hover:to-blue-700 transition-all duration-300">
+                                    Comece seu projeto
+                                </a>
+                                <a href="#services" class="px-8 py-3 rounded-md font-medium font-orbitron border border-cyan-500 text-white hover:bg-cyan-900 hover:bg-opacity-30 transition-all duration-300">
+                                    Nossos serviços
+                                </a>
+                            </div>
+                        </div>
+                        <div class="relative">
+                            <!-- Terminal Simulator -->
+                            <terminal></terminal>
+                            <div class="absolute -inset-8 bg-cyan-500 rounded-full opacity-20 blur-3xl -z-10"></div>
+                            <div class="absolute -inset-8 bg-blue-600 rounded-full opacity-20 blur-3xl -z-10"></div>
+                        </div>
+                    </div>
+                </section>
+            `,
+            mounted() {
+                this.$nextTick(() => {
+                    this.initAnimations();
+                });
+            },
+            methods: {
+                initAnimations() {
+                    gsap.from('.gradient-text', {
+                        duration: 1.5,
+                        y: 50,
+                        opacity: 0,
+                        stagger: 0.2,
+                        ease: "power3.out"
+                    });
+                }
+            }
+        });
+
+        // Terminal Component
+        Vue.component('terminal', {
+            template: `
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <div class="terminal-dot red"></div>
+                        <div class="terminal-dot yellow"></div>
+                        <div class="terminal-dot green"></div>
+                        <div class="terminal-title">kdevs-terminal</div>
+                    </div>
+                    <div class="terminal-body" ref="terminalBody">
+                        <!-- Terminal lines will be added dynamically -->
+                    </div>
+                </div>
+            `,
+            mounted() {
+                this.animateTerminal();
+            },
+            methods: {
+                animateTerminal() {
+                    const terminalLines = [
+                        "npm init kdevs-project",
+                        "Initializing KDEVS project structure...",
+                        "✔ Installed WordPress core",
+                        "✔ Configured Laravel backend",
+                        "✔ Integrated Vue.js components",
+                        "✔ Optimized for performance",
+                        "// Project ready in 2.8s",
+                        "git status",
+                        "On branch master",
+                        "Your branch is up to date with 'origin/master'.",
+                        "deploy --production",
+                        "Deploying to production server...",
+                        "✔ Build completed",
+                        "✔ Assets optimized",
+                        "✔ Database migrated",
+                        "✔ Cache cleared",
+                        "// Deployment successful!"
+                    ];
+                    
+                    const terminalBody = this.$refs.terminalBody;
+                    terminalBody.innerHTML = '';
+                    
+                    let delay = 0;
+                    
+                    terminalLines.forEach((line, index) => {
+                        setTimeout(() => {
+                            const div = document.createElement('div');
+                            div.className = 'terminal-line';
+                            
+                            if (line.startsWith("//")) {
+                                div.className += ' comment';
+                                div.textContent = line;
+                            } else if (line.startsWith("✔") || line.startsWith("On branch") || line.startsWith("Your branch") || line.startsWith("Deploying") || line.startsWith("Initializing")) {
+                                div.className += ' output';
+                                div.textContent = line;
+                            } else if (line.includes(" ")) {
+                                div.className += ' prompt';
+                                div.innerHTML = line;
+                            } else {
+                                div.className += ' prompt';
+                                div.innerHTML = line;
+                            }
+                            
+                            terminalBody.appendChild(div);
+                            terminalBody.scrollTop = terminalBody.scrollHeight;
+                            
+                            // Add blinking cursor after last line
+                            if (index === terminalLines.length - 1) {
+                                setTimeout(() => {
+                                    const cursorDiv = document.createElement('div');
+                                    cursorDiv.className = 'terminal-line prompt';
+                                    cursorDiv.innerHTML = '<span class="cursor"></span>';
+                                    terminalBody.appendChild(cursorDiv);
+                                    terminalBody.scrollTop = terminalBody.scrollHeight;
+                                }, 300);
+                            }
+                        }, delay);
+                        
+                        delay += 300;
+                    });
+                    
+                    // Repeat animation
+                    setTimeout(this.animateTerminal, delay + 3000);
+                }
+            }
+        });
+
+        // Clients Section Component
+        Vue.component('clients-section', {
+            template: `
+                <section class="py-12 bg-black bg-opacity-50 border-y border-gray-800">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <h2 class="text-center text-xl text-gray-400 mb-8 font-orbitron">TECNOLOGIAS QUE DOMINAMOS</h2>
+                        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 items-center justify-center">
+                            <div class="flex justify-center" v-for="tech in technologies" :key="tech.name">
+                                <img :src="tech.logo" :alt="tech.name" class="h-12 tech-icon opacity-80 hover:opacity-100">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            `,
+            data() {
+                return {
+                    technologies: [
+                        { name: 'WordPress', logo: 'https://upload.wikimedia.org/wikipedia/commons/9/98/WordPress_blue_logo.svg' },
+                        { name: 'Laravel', logo: 'https://upload.wikimedia.org/wikipedia/commons/9/9a/Laravel.svg' },
+                        { name: 'Vue.js', logo: 'https://upload.wikimedia.org/wikipedia/commons/9/95/Vue.js_Logo_2.svg' },
+                        { name: 'Tailwind CSS', logo: 'https://upload.wikimedia.org/wikipedia/commons/d/d5/Tailwind_CSS_Logo.svg' },
+                        { name: 'JavaScript', logo: 'https://upload.wikimedia.org/wikipedia/commons/6/6a/JavaScript-logo.png' },
+                        { name: 'PHP', logo: 'https://upload.wikimedia.org/wikipedia/commons/2/27/PHP-logo.svg' }
+                    ]
+                }
+            },
+            mounted() {
+                this.$nextTick(() => {
+                    this.initAnimations();
+                });
+            },
+            methods: {
+                initAnimations() {
+                    gsap.utils.toArray('.tech-icon').forEach((icon, i) => {
+                        gsap.from(icon, {
+                            scrollTrigger: {
+                                trigger: icon,
+                                start: "top 90%",
+                                toggleActions: "play none none none"
+                            },
+                            y: 20,
+                            opacity: 0,
+                            duration: 0.5,
+                            delay: i * 0.05,
+                            ease: "power2.out"
+                        });
+                    });
+                }
+            }
+        });
+
+        // Services Section Component
+        Vue.component('services-section', {
+            template: `
+                <section id="services" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+                    <div class="text-center mb-16">
+                        <h2 class="text-3xl sm:text-4xl font-bold font-orbitron mb-4">
+                            <span class="gradient-text">NOSSOS SERVIÇOS</span>
+                        </h2>
+                        <p class="text-lg text-gray-300 max-w-2xl mx-auto">
+                            Oferecemos soluções completas para sua presença digital, desde sites simples até sistemas complexos.
+                        </p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <service-card 
+                            v-for="(service, index) in services" 
+                            :key="index"
+                            :title="service.title"
+                            :description="service.description"
+                            :icon="service.icon"
+                            :color="service.color"
+                            :items="service.items"
+                        ></service-card>
+                    </div>
+                </section>
+            `,
+            data() {
+                return {
+                    services: [
+                        {
+                            title: "Sites Institucionais",
+                            description: "Desenvolvemos sites profissionais que representam sua marca e comunicam sua mensagem de forma clara e impactante.",
+                            icon: "fa-globe",
+                            color: "from-cyan-500 to-blue-600",
+                            items: [
+                                "Design responsivo e moderno",
+                                "Otimização para SEO",
+                                "Integração com redes sociais"
+                            ]
+                        },
+                        {
+                            title: "Lojas Virtuais",
+                            description: "E-commerces completos com todas as funcionalidades necessárias para vender online com segurança e eficiência.",
+                            icon: "fa-shopping-cart",
+                            color: "from-purple-500 to-indigo-600",
+                            items: [
+                                "Integração com meios de pagamento",
+                                "Gestão de estoque e pedidos",
+                                "Relatórios e análises"
+                            ]
+                        },
+                        {
+                            title: "Landing Pages",
+                            description: "Páginas de conversão otimizadas para capturar leads e impulsionar suas campanhas de marketing digital.",
+                            icon: "fa-rocket",
+                            color: "from-green-500 to-teal-600",
+                            items: [
+                                "Design persuasivo",
+                                "Formulários inteligentes",
+                                "Integração com ferramentas de automação"
+                            ]
+                        },
+                        {
+                            title: "Temas Personalizados",
+                            description: "Temas WordPress exclusivos desenvolvidos sob medida para atender às necessidades específicas do seu projeto.",
+                            icon: "fa-paint-brush",
+                            color: "from-yellow-500 to-orange-600",
+                            items: [
+                                "Design único e exclusivo",
+                                "Performance otimizada",
+                                "Fácil personalização"
+                            ]
+                        },
+                        {
+                            title: "Plugins WordPress",
+                            description: "Desenvolvemos plugins personalizados para adicionar funcionalidades específicas ao seu site WordPress.",
+                            icon: "fa-puzzle-piece",
+                            color: "from-red-500 to-pink-600",
+                            items: [
+                                "Soluções sob medida",
+                                "Código seguro e otimizado",
+                                "Documentação completa"
+                            ]
+                        },
+                        {
+                            title: "Sistemas Web Avançados",
+                            description: "Desenvolvimento de sistemas web complexos com Laravel, Vue.js e Livewire para atender necessidades específicas.",
+                            icon: "fa-code",
+                            color: "from-blue-500 to-indigo-600",
+                            items: [
+                                "Arquitetura escalável",
+                                "Painéis administrativos",
+                                "APIs RESTful"
+                            ]
+                        }
+                    ]
+                }
+            },
+            mounted() {
+                this.$nextTick(() => {
+                    this.initAnimations();
+                });
+            },
+            methods: {
+                initAnimations() {
+                    gsap.utils.toArray('.service-card').forEach((card, i) => {
+                        gsap.from(card, {
+                            scrollTrigger: {
+                                trigger: card,
+                                start: "top 80%",
+                                toggleActions: "play none none none"
+                            },
+                            y: 50,
+                            opacity: 0,
+                            duration: 0.8,
+                            delay: i * 0.1,
+                            ease: "power2.out"
+                        });
+                    });
+                }
+            }
+        });
+
+        // Service Card Component
+        Vue.component('service-card', {
+            props: ['title', 'description', 'icon', 'color', 'items'],
+            template: `
+                <div class="service-card rounded-xl p-8 border border-gray-800 relative overflow-hidden">
+                    <div class="absolute -right-10 -top-10 w-32 h-32" :class="'bg-' + color.split('-')[1] + '-500 rounded-full opacity-10'"></div>
+                    <div class="flex items-center mb-6">
+                        <div class="w-14 h-14 rounded-lg" :class="'bg-gradient-to-br ' + color" class="flex items-center justify-center mr-4">
+                            <i :class="'fas ' + icon + ' text-2xl text-white'"></i>
+                        </div>
+                        <h3 class="text-xl font-bold font-orbitron">{{ title }}</h3>
+                    </div>
+                    <p class="text-gray-300 mb-6">
+                        {{ description }}
+                    </p>
+                    <ul class="space-y-2 text-gray-400">
+                        <li v-for="(item, index) in items" :key="index" class="flex items-center">
+                            <i :class="'fas fa-check-circle text-' + color.split('-')[1] + '-500 mr-2'"></i>
+                            {{ item }}
+                        </li>
+                    </ul>
+                </div>
+            `
+        });
+
+        // Technologies Section Component
+        Vue.component('technologies-section', {
+            template: `
+                <section id="technologies" class="py-20 bg-black bg-opacity-50 border-y border-gray-800">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div class="text-center mb-16">
+                            <h2 class="text-3xl sm:text-4xl font-bold font-orbitron mb-4">
+                                <span class="gradient-text">NOSSO ECOSSISTEMA TECNOLÓGICO</span>
+                            </h2>
+                            <p class="text-lg text-gray-300 max-w-2xl mx-auto">
+                                Utilizamos as melhores tecnologias do mercado para entregar soluções robustas e de alta performance.
+                            </p>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                            <div>
+                                <h3 class="text-2xl font-bold font-orbitron mb-6 text-cyan-400">WordPress</h3>
+                                <p class="text-gray-300 mb-6">
+                                    Especialistas em desenvolvimento WordPress, criamos sites rápidos, seguros e otimizados para SEO.
+                                </p>
+                                <div class="grid grid-cols-3 gap-4 mb-8">
+                                    <div class="bg-gray-900 rounded-lg p-4 flex flex-col items-center justify-center">
+                                        <i class="fab fa-wordpress text-4xl text-blue-500 mb-2"></i>
+                                        <span class="text-sm text-gray-300">WordPress Core</span>
+                                    </div>
+                                    <div class="bg-gray-900 rounded-lg p-4 flex flex-col items-center justify-center">
+                                        <i class="fas fa-store text-4xl text-orange-500 mb-2"></i>
+                                        <span class="text-sm text-gray-300">WooCommerce</span>
+                                    </div>
+                                    <div class="bg-gray-900 rounded-lg p-4 flex flex-col items-center justify-center">
+                                        <i class="fas fa-shield-alt text-4xl text-green-500 mb-2"></i>
+                                        <span class="text-sm text-gray-300">Segurança</span>
+                                    </div>
+                                    <div class="bg-gray-900 rounded-lg p-4 flex flex-col items-center justify-center">
+                                        <i class="fas fa-tachometer-alt text-4xl text-purple-500 mb-2"></i>
+                                        <span class="text-sm text-gray-300">Performance</span>
+                                    </div>
+                                    <div class="bg-gray-900 rounded-lg p-4 flex flex-col items-center justify-center">
+                                        <i class="fas fa-search text-4xl text-yellow-500 mb-2"></i>
+                                        <span class="text-sm text-gray-300">SEO</span>
+                                    </div>
+                                    <div class="bg-gray-900 rounded-lg p-4 flex flex-col items-center justify-center">
+                                        <i class="fas fa-mobile-alt text-4xl text-pink-500 mb-2"></i>
+                                        <span class="text-sm text-gray-300">Responsivo</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h3 class="text-2xl font-bold font-orbitron mb-6 text-purple-400">Laravel Ecosystem</h3>
+                                <p class="text-gray-300 mb-6">
+                                    Desenvolvimento de aplicações web complexas com Laravel, Vue.js e Livewire para soluções sob medida.
+                                </p>
+                                <div class="grid grid-cols-3 gap-4">
+                                    <div class="bg-gray-900 rounded-lg p-4 flex flex-col items-center justify-center">
+                                        <i class="fab fa-laravel text-4xl text-red-500 mb-2"></i>
+                                        <span class="text-sm text-gray-300">Laravel</span>
+                                    </div>
+                                    <div class="bg-gray-900 rounded-lg p-4 flex flex-col items-center justify-center">
+                                        <i class="fab fa-vuejs text-4xl text-green-500 mb-2"></i>
+                                        <span class="text-sm text-gray-300">Vue.js</span>
+                                    </div>
+                                    <div class="bg-gray-900 rounded-lg p-4 flex flex-col items-center justify-center">
+                                        <i class="fas fa-bolt text-4xl text-blue-500 mb-2"></i>
+                                        <span class="text-sm text-gray-300">Livewire</span>
+                                    </div>
+                                    <div class="bg-gray-900 rounded-lg p-4 flex flex-col items-center justify-center">
+                                        <i class="fas fa-database text-4xl text-yellow-500 mb-2"></i>
+                                        <span class="text-sm text-gray-300">MySQL</span>
+                                    </div>
+                                    <div class="bg-gray-900 rounded-lg p-4 flex flex-col items-center justify-center">
+                                        <i class="fas fa-server text-4xl text-cyan-500 mb-2"></i>
+                                        <span class="text-sm text-gray-300">APIs</span>
+                                    </div>
+                                    <div class="bg-gray-900 rounded-lg p-4 flex flex-col items-center justify-center">
+                                        <i class="fas fa-lock text-4xl text-purple-500 mb-2"></i>
+                                        <span class="text-sm text-gray-300">Autenticação</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            `
+        });
+
+        // Process Section Component
+        Vue.component('process-section', {
+            template: `
+                <section id="process" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+                    <div class="text-center mb-16">
+                        <h2 class="text-3xl sm:text-4xl font-bold font-orbitron mb-4">
+                            <span class="gradient-text">NOSSO PROCESSO</span>
+                        </h2>
+                        <p class="text-lg text-gray-300 max-w-2xl mx-auto">
+                            Um método claro e eficiente para transformar sua ideia em um produto digital de sucesso.
+                        </p>
+                    </div>
+                    
+                    <div class="relative pl-8 timeline">
+                        <div class="relative pb-12 timeline-item" v-for="(step, index) in steps" :key="index">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0"></div>
+                                <div class="ml-4">
+                                    <h3 class="text-xl font-bold font-orbitron text-white mb-2">{{ step.title }}</h3>
+                                    <p class="text-gray-300">
+                                        {{ step.description }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="absolute -inset-8 bg-cyan-500 rounded-full opacity-0 group-hover:opacity-10 blur-3xl -z-10 transition-all duration-300"></div>
+                        </div>
+                    </div>
+                </section>
+            `,
+            data() {
+                return {
+                    steps: [
+                        {
+                            title: "1. Descoberta e Planejamento",
+                            description: "Entendemos seus objetivos, público-alvo e requisitos para criar um plano estratégico detalhado."
+                        },
+                        {
+                            title: "2. Design e Prototipagem",
+                            description: "Criamos wireframes e protótipos interativos para validar a experiência do usuário antes do desenvolvimento."
+                        },
+                        {
+                            title: "3. Desenvolvimento",
+                            description: "Implementação do projeto com as melhores práticas de codificação, segurança e performance."
+                        },
+                        {
+                            title: "4. Testes e Qualidade",
+                            description: "Realizamos tests rigorosos em diferentes dispositivos e navegadores para garantir qualidade."
+                        },
+                        {
+                            title: "5. Lançamento e Suporte",
+                            description: "Fazemos a implantação e oferecemos suporte contínuo para manter seu projeto atualizado e seguro."
+                        }
+                    ]
+                }
+            },
+            mounted() {
+                this.$nextTick(() => {
+                    this.initAnimations();
+                });
+            },
+            methods: {
+                initAnimations() {
+                    gsap.utils.toArray('.timeline-item').forEach((item, i) => {
+                        gsap.from(item, {
+                            scrollTrigger: {
+                                trigger: item,
+                                start: "top 80%",
+                                toggleActions: "play none none none"
+                            },
+                            x: -50,
+                            opacity: 0,
+                            duration: 0.8,
+                            delay: i * 0.15,
+                            ease: "power2.out"
+                        });
+                    });
+                }
+            }
+        });
+
+        // Contact Section Component
+        Vue.component('contact-section', {
+            template: `
+                <section id="contact" class="py-20 bg-black bg-opacity-50 border-y border-gray-800">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                            <div>
+                                <h2 class="text-3xl sm:text-4xl font-bold font-orbitron mb-6">
+                                    <span class="gradient-text">PRONTO PARA INICIAR SEU PROJETO?</span>
+                                </h2>
+                                <p class="text-lg text-gray-300 mb-8">
+                                    Entre em contato conosco para discutir suas ideias e como podemos ajudá-lo a transformá-las em realidade.
+                                </p>
+                                
+                                <div class="space-y-6">
+                                    <contact-info 
+                                        icon="fa-envelope"
+                                        title="Email"
+                                        text="contato@kdevs.com.br"
+                                        color="from-cyan-500 to-blue-600"
+                                    ></contact-info>
+                                    
+                                    <contact-info 
+                                        icon="fa-phone-alt"
+                                        title="Telefone"
+                                        text="+55 (11) 99999-9999"
+                                        color="from-purple-500 to-indigo-600"
+                                    ></contact-info>
+                                    
+                                    <contact-info 
+                                        icon="fa-map-marker-alt"
+                                        title="Localização"
+                                        text="São Paulo, Brasil"
+                                        color="from-green-500 to-teal-600"
+                                    ></contact-info>
+                                </div>
+                                
+                                <div class="mt-8 flex space-x-4">
+                                    <social-icon 
+                                        v-for="(social, index) in socials" 
+                                        :key="index"
+                                        :icon="social.icon"
+                                        :color="social.color"
+                                        :url="social.url"
+                                    ></social-icon>
+                                </div>
+                            </div>
+                            
+                            <div class="gradient-border rounded-xl p-1">
+                                <div class="bg-gray-900 rounded-lg p-8">
+                                    <h3 class="text-2xl font-bold font-orbitron mb-6 text-center">Envie sua mensagem</h3>
+                                    <form @submit.prevent="submitForm" class="space-y-6">
+                                        <div>
+                                            <label for="name" class="block text-sm font-medium text-gray-300 mb-1">Nome</label>
+                                            <input type="text" id="name" v-model="form.name" class="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent" required>
+                                        </div>
+                                        
+                                        <div>
+                                            <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Email</label>
+                                            <input type="email" id="email" v-model="form.email" class="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent" required>
+                                        </div>
+                                        
+                                        <div>
+                                            <label for="subject" class="block text-sm font-medium text-gray-300 mb-1">Assunto</label>
+                                            <input type="text" id="subject" v-model="form.subject" class="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent" required>
+                                        </div>
+                                        
+                                        <div>
+                                            <label for="message" class="block text-sm font-medium text-gray-300 mb-1">Mensagem</label>
+                                            <textarea id="message" v-model="form.message" rows="4" class="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent" required></textarea>
+                                        </div>
+                                        
+                                        <button type="submit" class="w-full px-6 py-3 rounded-lg font-medium font-orbitron bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-600 hover:to-blue-700 transition-all duration-300">
+                                            Enviar Mensagem
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            `,
+            data() {
+                return {
+                    form: {
+                        name: '',
+                        email: '',
+                        subject: '',
+                        message: ''
+                    },
+                    socials: [
+                        { icon: 'fa-linkedin-in', color: 'hover:bg-cyan-600', url: '#' },
+                        { icon: 'fa-facebook-f', color: 'hover:bg-blue-600', url: '#' },
+                        { icon: 'fa-instagram', color: 'hover:bg-purple-600', url: '#' },
+                        { icon: 'fa-twitter', color: 'hover:bg-blue-400', url: '#' }
+                    ]
+                }
+            },
+            methods: {
+                submitForm() {
+                    // Here you would typically send the form data to your server
+                    // For this example, we'll just show a success message
+                    alert('Mensagem enviada com sucesso! Entraremos em contato em breve.');
+                    this.form = {
+                        name: '',
+                        email: '',
+                        subject: '',
+                        message: ''
+                    };
+                }
+            },
+            mounted() {
+                this.$nextTick(() => {
+                    gsap.from('#contactForm', {
+                        scrollTrigger: {
+                            trigger: '#contactForm',
+                            start: "top 80%",
+                            toggleActions: "play none none none"
+                        },
+                        y: 50,
+                        opacity: 0,
+                        duration: 1,
+                        ease: "power2.out"
+                    });
+                });
+            }
+        });
+
+        // Contact Info Component
+        Vue.component('contact-info', {
+            props: ['icon', 'title', 'text', 'color'],
+            template: `
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 rounded-lg" :class="'bg-gradient-to-br ' + color" class="flex items-center justify-center">
+                            <i :class="'fas ' + icon + ' text-xl text-white'"></i>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-bold text-white mb-1">{{ title }}</h3>
+                        <p class="text-gray-300">{{ text }}</p>
+                    </div>
+                </div>
+            `
+        });
+
+        // Social Icon Component
+        Vue.component('social-icon', {
+            props: ['icon', 'color', 'url'],
+            template: `
+                <a :href="url" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center" :class="color" class="transition-colors duration-300">
+                    <i :class="'fab ' + icon + ' text-white'"></i>
+                </a>
+            `
+        });
+
+        // Footer Component
+        Vue.component('app-footer', {
+            template: `
+                <footer class="bg-black bg-opacity-90 py-12">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                            <div>
+                                <h3 class="text-xl font-bold font-orbitron gradient-text mb-4">KDEVS</h3>
+                                <p class="text-gray-400">
+                                    Transformando ideias em realidade digital com tecnologia de ponta e design inovador.
+                                </p>
+                            </div>
+                            
+                            <div>
+                                <h4 class="text-lg font-bold font-orbitron text-white mb-4">Serviços</h4>
+                                <ul class="space-y-2">
+                                    <li><a href="#" class="text-gray-400 hover:text-cyan-400 transition-colors duration-300">Sites Institucionais</a></li>
+                                    <li><a href="#" class="text-gray-400 hover:text-cyan-400 transition-colors duration-300">Lojas Virtuais</a></li>
+                                    <li><a href="#" class="text-gray-400 hover:text-cyan-400 transition-colors duration-300">Landing Pages</a></li>
+                                    <li><a href="#" class="text-gray-400 hover:text-cyan-400 transition-colors duration-300">Temas WordPress</a></li>
+                                    <li><a href="#" class="text-gray-400 hover:text-cyan-400 transition-colors duration-300">Plugins WordPress</a></li>
+                                </ul>
+                            </div>
+                            
+                            <div>
+                                <h4 class="text-lg font-bold font-orbitron text-white mb-4">Tecnologias</h4>
+                                <ul class="space-y-2">
+                                    <li><a href="#" class="text-gray-400 hover:text-cyan-400 transition-colors duration-300">WordPress</a></li>
+                                    <li><a href="#" class="text-gray-400 hover:text-cyan-400 transition-colors duration-300">Laravel</a></li>
+                                    <li><a href="#" class="text-gray-400 hover:text-cyan-400 transition-colors duration-300">Vue.js</a></li>
+                                    <li><a href="#" class="text-gray-400 hover:text-cyan-400 transition-colors duration-300">Livewire</a></li>
+                                    <li><a href="#" class="text-gray-400 hover:text-cyan-400 transition-colors duration-300">Tailwind CSS</a></li>
+                                </ul>
+                            </div>
+                            
+                            <div>
+                                <h4 class="text-lg font-bold font-orbitron text-white mb-4">Links Rápidos</h4>
+                                <ul class="space-y-2">
+                                    <li><a href="#home" class="text-gray-400 hover:text-cyan-400 transition-colors duration-300">Início</a></li>
+                                    <li><a href="#services" class="text-gray-400 hover:text-cyan-400 transition-colors duration-300">Serviços</a></li>
+                                    <li><a href="#technologies" class="text-gray-400 hover:text-cyan-400 transition-colors duration-300">Tecnologias</a></li>
+                                    <li><a href="#process" class="text-gray-400 hover:text-cyan-400 transition-colors duration-300">Processo</a></li>
+                                    <li><a href="#contact" class="text-gray-400 hover:text-cyan-400 transition-colors duration-300">Contato</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                            <p class="text-gray-400 text-sm mb-4 md:mb-0">
+                                &copy; 2023 Projeto KDEVS. Todos os direitos reservados.
+                            </p>
+                            <div class="flex space-x-6">
+                                <social-icon 
+                                    v-for="(social, index) in socials" 
+                                    :key="index"
+                                    :icon="social.icon"
+                                    :color="social.color"
+                                    :url="social.url"
+                                ></social-icon>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            `,
+            data() {
+                return {
+                    socials: [
+                        { icon: 'fa-linkedin-in', color: 'hover:text-cyan-400', url: '#' },
+                        { icon: 'fa-facebook-f', color: 'hover:text-cyan-400', url: '#' },
+                        { icon: 'fa-instagram', color: 'hover:text-cyan-400', url: '#' },
+                        { icon: 'fa-twitter', color: 'hover:text-cyan-400', url: '#' }
+                    ]
+                }
+            }
+        });
+
+        // Main Vue Instance
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    isChatOpen: false,
+                    messageInput: '',
+                    messages: []
+                }
+            },
+            methods: {
+                toggleChat() {
+                    this.isChatOpen = !this.isChatOpen;
+                    
+                    // Auto-scroll to bottom when chat opens
+                    if (this.isChatOpen) {
+                        this.$nextTick(() => {
+                            this.$refs.chatMessages.scrollTop = this.$refs.chatMessages.scrollHeight;
+                        });
+                    }
+                },
+                sendMessage() {
+                    if (this.messageInput.trim() === '') return;
+                    
+                    // Add user message
+                    const userMessage = {
+                        text: this.messageInput,
+                        sender: 'user',
+                        time: this.getCurrentTime()
+                    };
+                    this.messages.push(userMessage);
+                    
+                    // Clear input
+                    this.messageInput = '';
+                    
+                    // Auto-scroll to bottom
+                    this.$nextTick(() => {
+                        this.$refs.chatMessages.scrollTop = this.$refs.chatMessages.scrollHeight;
+                    });
+                    
+                    // Simulate bot response after a delay
+                    setTimeout(() => {
+                        const botResponses = [
+                            "Entendi sua mensagem! Como posso te ajudar?",
+                            "Obrigado pelo seu contato! Vamos analisar sua solicitação.",
+                            "Estamos aqui para ajudar! Você pode nos enviar mais detalhes?",
+                            "Recebemos sua mensagem com sucesso! Em breve retornaremos."
+                        ];
+                        
+                        const randomResponse = botResponses[Math.floor(Math.random() * botResponses.length)];
+                        
+                        const botMessage = {
+                            text: randomResponse,
+                            sender: 'bot',
+                            time: this.getCurrentTime()
+                        };
+                        
+                        this.messages.push(botMessage);
+                        
+                        // Auto-scroll to bottom
+                        this.$nextTick(() => {
+                            this.$refs.chatMessages.scrollTop = this.$refs.chatMessages.scrollHeight;
+                        });
+                    }, 1000);
+                },
+                getCurrentTime() {
+                    const now = new Date();
+                    return `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+                }
+            },
+            mounted() {
+                // Register ScrollTrigger plugin
+                gsap.registerPlugin(ScrollTrigger);
+                
+                // Smooth scrolling for anchor links
+                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                    anchor.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        
+                        const targetId = this.getAttribute('href');
+                        if (targetId === '#') return;
+                        
+                        const targetElement = document.querySelector(targetId);
+                        if (targetElement) {
+                            // Close mobile menu if open
+                            const mobileMenu = document.getElementById('mobile-menu');
+                            if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                                this.$root.$children[0].isMenuOpen = false;
+                            }
+                            
+                            // Scroll to target
+                            window.scrollTo({
+                                top: targetElement.offsetTop - 80,
+                                behavior: 'smooth'
+                            });
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
